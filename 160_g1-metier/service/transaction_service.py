@@ -6,8 +6,6 @@ def create_transaction(source_acc, destination_acc, currency, amount, label, dat
     new_transaction = transaction.Transaction(source_acc, destination_acc, currency, amount, label, datetime, type)
     return transaction_repo.create_transaction(new_transaction)
 
-
-
 #read
 def find_by_id(id):
     dbElement = transaction_repo.find_by_id(id)
@@ -21,3 +19,6 @@ def find_all():
     return elementList
 
 #update
+def update_transaction(id, source_acc, destination_acc, currency, amount, label, datetime, type):
+    updated_transaction = transaction.Transaction(id, source_acc, destination_acc, currency, amount, label, datetime, type)
+    return transaction_repo.update_transaction(updated_transaction)
