@@ -1,3 +1,5 @@
+CREATE DATABASE mylittlebank;
+
 CREATE TABLE Account (
     account_number BIGINT,
     currency VARCHAR(3),
