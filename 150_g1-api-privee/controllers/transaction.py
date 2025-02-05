@@ -1,4 +1,6 @@
 from flask import Blueprint
+import requests
+from config import CONFIG
 
 transaction_bp = Blueprint('transaction', __name__)
 
@@ -6,13 +8,19 @@ ENDPOINT = "/transaction"
 
 @transaction_bp.post(f"{ENDPOINT}/card")
 def post_transaction_card():
-    # Logique pour une transaction avec carte
-    return "<p>Transaction with card</p>"
+    try:
+        response = requests.post(f"{CONFIG['API_URL']}/{ENDPOINT}/card")
+        return response
+    except requests.exceptions.RequestException as e:
+        return e
 
 @transaction_bp.post(f"{ENDPOINT}/check")
 def post_transaction_check():
-    # Logique pour une transaction par chèque
-    return "<p>Transaction with check</p>"
+    try:
+        response = requests.post(f"{CONFIG['API_URL']}/{ENDPOINT}/check")
+        return response
+    except requests.exceptions.RequestException as e:
+        return e
 
 @transaction_bp.post(f"{ENDPOINT}/transfer")
 def post_transaction_transfer():

@@ -1,12 +1,10 @@
 from flask import Flask
-
-# Importer les Blueprints
 from controllers import account_bp
+from config import CONFIG
 
 app = Flask(__name__)
 
-# Enregistrer les Blueprintss
 app.register_blueprint(account_bp)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
