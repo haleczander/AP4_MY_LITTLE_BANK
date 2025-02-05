@@ -1,11 +1,12 @@
 class Transaction:
-    def __init__(self, id, source_acc, destination_acc, currency, amount, label, type):
+    def __init__(self, id, source_acc, destination_acc, currency, amount, label, datetime, type):
         self.id = id
         self.source = source_acc
         self.destination = destination_acc
         self.currency = currency
         self.amount = amount
         self.label = label
+        self.datetime = datetime
         self.type = type
     def get_id(self):
         return self.id
