@@ -1,24 +1,26 @@
 from DTO import transaction, account
 from repo import transaction_repo
+from service.account_service import AccountService
 
-#create
-def create_transaction(source_acc, destination_acc, currency, amount, label, datetime, type):
-    new_transaction = transaction.Transaction(source_acc, destination_acc, currency, amount, label, datetime, type)
-    return transaction_repo.create_transaction(new_transaction)
+transaction_repo = transaction_repo.TransactionRepo()
+account_service = AccountService()
 
-#read
-def find_by_id(id):
-    dbElement = transaction_repo.find_by_id(id)
-    return transaction.Transaction(dbElement.id, dbElement.source_acc, dbElement.destination_acc, dbElement.currency, dbElement.amount, dbElement.label, dbElement.datetime, dbElement.type)
+class TransactionService:
 
-def find_all():
-    dbElements = transaction_repo.find_all()
-    elementList = []
-    for dbElement in dbElements:
-        elementList.append(transaction.Transaction(dbElement.id, dbElement.source_acc, dbElement.destination_acc, dbElement.currency, dbElement.amount, dbElement.label, dbElement.datetime, dbElement.type))
-    return elementList
+    #create
+    def create_transaction(source_acc, destination_acc, currency, amount, label, datetime, type):
+        transaction_repo.create_transaction(source_acc, destination_acc, currency, amount, label, datetime, type)
+        account_service.update_sold(source_acc, account_service.get_balance(source_acc) - amount, currency)
+        account_service.update_sold(destination_acc, account_service.get_balance(destination_acc) + amount, currency)
+        return
 
-#update
-def update_transaction(id, source_acc, destination_acc, currency, amount, label, datetime, type):
-    updated_transaction = transaction.Transaction(id, source_acc, destination_acc, currency, amount, label, datetime, type)
-    return transaction_repo.update_transaction(updated_transaction)
+    #read
+    def find_by_id(id):
+        transaction = transaction_repo.find_by_id(id)
+        return transaction
+    def get_transactions_by_account(account_id):
+        transactions = transaction_repo.get_by_account(account_id)
+        transactionList = []
+        for transaction in transactions:
+            transactionList.append(transaction.Transaction(transaction.id, transaction.source_acc, transaction.destination_acc, transaction.currency, transaction.amount, transaction.label, transaction.datetime, transaction.type))
+        return transactions
