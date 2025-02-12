@@ -1,4 +1,4 @@
-import psycopg2  # type: ignore
+import psycopg2 
 from config import CONFIG
 
 def connect():

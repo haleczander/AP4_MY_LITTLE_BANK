@@ -1,6 +1,6 @@
 from DTO import frais_bancaire
+from .service import Service
 from repo.frais_bancaire_repo import FraisBancaireRepo
-from service import Service
 
 
 class FraisBancaireService( Service ):

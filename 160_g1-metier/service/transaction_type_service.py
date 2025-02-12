@@ -1,6 +1,6 @@
 from DTO import transaction_type
 from repo import transaction_type_repo
-from service import Service
+from .service import Service
 
 
 class TransactionTypeService( Service ):

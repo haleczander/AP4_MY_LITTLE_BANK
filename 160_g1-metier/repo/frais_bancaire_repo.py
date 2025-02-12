@@ -1,4 +1,4 @@
-from repository import Repository
+from .repository import Repository
 
 class FraisBancaireRepo(Repository):
     def __init__(self):

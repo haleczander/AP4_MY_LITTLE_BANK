@@ -1,7 +1,7 @@
 from DTO import transaction, account
 from repo.transaction_repo import TransactionRepo
 from service.account_service import AccountService
-from service import Service
+from .service import Service
 
 
 

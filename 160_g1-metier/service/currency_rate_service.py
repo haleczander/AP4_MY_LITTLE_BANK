@@ -1,6 +1,6 @@
 from DTO import currency_rate
 from repo.currency_rate_repo import CurrencyRateRepo
-from service import Service
+from .service import Service
 
 
 class CurrencyRateService( Service ):

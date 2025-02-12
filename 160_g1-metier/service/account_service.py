@@ -1,6 +1,6 @@
 from repo.account_repo import AccountRepo
-from service import Service
-from service.transaction_service import TransactionService
+# from .transaction_service import TransactionService
+from .service import Service
 
 
 class AccountService( Service ):
@@ -8,7 +8,7 @@ class AccountService( Service ):
     def __init__(self):
         super().__init__()
         self.account_repo = AccountRepo()
-        self.transaction_service = TransactionService()
+        # self.transaction_service = TransactionService()
 
 
     #create
@@ -48,6 +48,6 @@ class AccountService( Service ):
         return self.account_repo.update_sold(id, sold, currency)
         
     def transfer(self, source_acc, destination_acc, currency, amount):
-        self.transaction_service.create_transaction(source_acc, destination_acc, currency, amount, "transfer")
+        # self.transaction_service.create_transaction(source_acc, destination_acc, currency, amount, "transfer")
         return 0
 
