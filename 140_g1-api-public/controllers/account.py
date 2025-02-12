@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import requests
 from config import CONFIG
 
+
 account_bp = Blueprint('account', __name__)
 
 ENDPOINT = "/account"
