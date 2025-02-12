@@ -19,21 +19,21 @@ class AccountRepo(Repository):
         return self.connection.fetchone()
 
 
-    def get_balance(id):
+    def get_balance(self, id):
         
         self.connection.execute("SELECT sold FROM account WHERE id = %s", (id,))
         return self.connection.fetchone()
 
 
     #update
-    def update_account(id, sold, currency):
+    def update_account(self, id, sold, currency):
         
         self.connection.execute("UPDATE account SET sold = %s, currency = %s WHERE id = %s", (sold, currency, id))
         self.connection.commit()
         return 0
 
     #delete
-    def delete_account(id):
+    def delete_account(self, id):
         
         self.connection.execute("DELETE FROM account WHERE id = %s", (id,))
         self.connection.commit()
