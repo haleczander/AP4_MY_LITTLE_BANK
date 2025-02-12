@@ -1,29 +1,31 @@
-import connect_db as db
+from repository import Repository
 
 
-class TransactionRepo:
-    def get_by_account(account_id):
-        cursor = db.connect()
-        cursor.execute("""
+class TransactionRepo(Repository):
+    def __init__(self):
+        super().__init__()
+
+    def get_by_account(self, account_id):
+        
+        self.connection.execute("""
             SELECT * FROM transaction 
             WHERE source_acc = %s OR destination_acc = %s 
             ORDER BY transaction_date DESC 
             LIMIT 50
         """, (account_id, account_id))
-        return cursor.fetchall()
+        return self.connection.fetchall()
     
-    def get_by_id(id):
-        curseur = db.connect()
-        curseur.execute("""
+    def get_by_id(self,  id):
+        self.connection.execute("""
             SELECT * FROM transaction 
             WHERE id = %s
         """, (id))
-        return curseur.fetchone()
+        return self.connection.fetchone()
 
-    def create_transaction(transaction):
-        cursor = db.connect()
-        cursor.execute("""
+    def create_transaction(self, transaction):
+        
+        self.connection.execute("""
             INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """, (transaction.source_acc, transaction.destination_acc, transaction.currency, transaction.amount, transaction.label, transaction.datetime, transaction.type))
-        return cursor.lastrowid
+        return self.connection.lastrowid

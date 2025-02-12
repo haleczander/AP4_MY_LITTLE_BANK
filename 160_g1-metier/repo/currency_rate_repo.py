@@ -1,8 +1,10 @@
-import connect_db as db
+from repository import Repository
 
-class CurrencyRateRepo:
+class CurrencyRateRepo(Repository):
+    def __init__(self):
+        super().__init__()
 
     
-    def get_currency(label):
-        cursor = db.connect()
+    def get_currency(self, label):
+        
         return "tbd"

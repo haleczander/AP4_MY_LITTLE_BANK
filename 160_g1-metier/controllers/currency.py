@@ -20,5 +20,5 @@ def get_currency_allowed(currency):
 
 @currency_bp.post(f"{CURRENCY_ENDPOINT}/rate")
 def post_currency_rate(currency):
-    urrency_rate_service.getCurrencyRate(currency)
+    currency_rate_service.getCurrencyRate(currency)
     return f"<p>Rate for {currency} is 1.23</p>"

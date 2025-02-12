@@ -1,5 +1,7 @@
-import connect_db as db
+from repository import Repository
 
 
-class TransactionTypeRepo:
-    None
+class TransactionTypeRepo(Repository):
+    def __init__(self):
+        super().__init__()
+    
