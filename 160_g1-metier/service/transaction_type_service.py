@@ -1,22 +1,22 @@
-from DTO import transaction_type
-from repo import transaction_type_repo
+from dto import TransactionType
+from repo import TransactionTypeRepo
 from .service import Service
 
 
-class TransactionTypeService( Service ):
+class TransactionTypeService(Service):
 
     def __init__(self):
         super().__init__()
+        self.transaction_type_repo = TransactionTypeRepo()
 
-    #read
+    # read
     def find_by_id(self, id):
-        dbElement = transaction_type_repo.find_by_id(id)
-        return transaction_type.TransactionType(dbElement.label)
+        dbElement = self.transaction_type_repo.find_by_id(id)
+        return TransactionType(dbElement.label)
 
     def find_all(self):
-        dbElements = transaction_type_repo.find_all()
+        dbElements = self.transaction_type_repo.find_all()
         elementList = []
         for dbElement in dbElements:
-            elementList.append(transaction_type.TransactionType(dbElement.label))
+            elementList.append(TransactionType(dbElement.label))
         return elementList
-

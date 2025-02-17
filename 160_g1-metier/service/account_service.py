@@ -1,17 +1,17 @@
 from repo.account_repo import AccountRepo
+
 # from .transaction_service import TransactionService
 from .service import Service
 
 
-class AccountService( Service ):
+class AccountService(Service):
 
     def __init__(self):
         super().__init__()
         self.account_repo = AccountRepo()
         # self.transaction_service = TransactionService()
 
-
-    #create
+    # create
     def create_account(self, sold, currency):
         if sold >= 0:
             self.account_repo.create_account(sold, currency)
@@ -19,13 +19,12 @@ class AccountService( Service ):
         else:
             return -1
 
-    #read
+    # read
     def is_account_exists(self, id):
         if self.account_repo.find_by_id(id) is None:
             return False
         else:
             return True
-
 
     def get_account(self, id):
         account = self.account_repo.find_by_id(id)
@@ -43,11 +42,10 @@ class AccountService( Service ):
             return -1
         return details
 
-    #update
+    # update
     def update_sold(self, id, sold, currency):
         return self.account_repo.update_sold(id, sold, currency)
-        
+
     def transfer(self, source_acc, destination_acc, currency, amount):
         # self.transaction_service.create_transaction(source_acc, destination_acc, currency, amount, "transfer")
         return 0
-

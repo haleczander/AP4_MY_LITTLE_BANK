@@ -1,10 +1,9 @@
-from DTO import currency_rate
 from repo.currency_rate_repo import CurrencyRateRepo
 from .service import Service
 
 
-class CurrencyRateService( Service ):
-    
+class CurrencyRateService(Service):
+
     def __init__(self):
         super().__init__()
         self.currency_rate_repo = CurrencyRateRepo()

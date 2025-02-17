@@ -1,28 +1,21 @@
-from flask import Blueprint
+from flask import Blueprint, request
 import requests
-from config import CONFIG
+from config import API
 
 transaction_bp = Blueprint('transaction', __name__)
 
-ENDPOINT = "/transaction"
+ENDPOINT = f"{API}/transaction"
 
 @transaction_bp.post(f"{ENDPOINT}/card")
 def post_transaction_card():
-    try:
-        response = requests.post(f"{CONFIG['API_URL']}/{ENDPOINT}/card")
-        return response
-    except requests.exceptions.RequestException as e:
-        return e
+    return requests.post(f"{ENDPOINT}/card", json=request.get_json()) 
+
 
 @transaction_bp.post(f"{ENDPOINT}/check")
 def post_transaction_check():
-    try:
-        response = requests.post(f"{CONFIG['API_URL']}/{ENDPOINT}/check")
-        return response
-    except requests.exceptions.RequestException as e:
-        return e
+    return requests.post(f"{ENDPOINT}/check", json=request.get_json())
+
 
 @transaction_bp.post(f"{ENDPOINT}/transfer")
 def post_transaction_transfer():
-    # Logique pour un virement
-    return "<p>Transaction with transfer</p>"
+    return requests.post(f"{ENDPOINT}/transfer", json=request.get_json())
