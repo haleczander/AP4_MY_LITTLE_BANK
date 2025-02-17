@@ -4,15 +4,15 @@ from config import API
 
 currency_bp = Blueprint('currency', __name__)
 
-ENDPOINT = f"{API}/currency"
-CURRENCY_ENDPOINT = f"{ENDPOINT}/<currency>"
+ENDPOINT = "/currency"
+CURRENCY = "<currency>"
 
-@currency_bp.get(f"{CURRENCY_ENDPOINT}/allowed")
+@currency_bp.get(f"{ENDPOINT}/{CURRENCY}/allowed")
 def get_currency_allowed(currency):
-    return requests.get(f"{ENDPOINT}/{currency}/allowed")
+    return requests.get(f"{API}{ENDPOINT}/{currency}/allowed")
 
 
-@currency_bp.post(f"{CURRENCY_ENDPOINT}/rate")
+@currency_bp.post(f"{ENDPOINT}/{CURRENCY}/rate")
 def post_currency_rate(currency):
-    return requests.post(f"{ENDPOINT}/{currency}/rate", json=request.get_json())
+    return requests.post(f"{API}{ENDPOINT}/{currency}/rate", json=request.get_json())
 
