@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS mylittlebank;
 CREATE DATABASE mylittlebank;
-CONNECT TO mylittlebank;
+\c mylittlebank;
 DROP TABLE IF EXISTS account CASCADE;
 DROP TABLE IF EXISTS transaction CASCADE;
 DROP TABLE IF EXISTS exchange_rate CASCADE;
