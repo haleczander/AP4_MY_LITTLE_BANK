@@ -4,8 +4,8 @@ from config import CONFIG
 def connect():
     conn = psycopg2.connect(
         dbname="mylittlebank",
-        user="postgres",
-        password="postgres",
+        user="metier",
+        password="",
         host=CONFIG["DB_HOST"],
         port="5432"
     )

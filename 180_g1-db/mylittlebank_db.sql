@@ -1,6 +1,6 @@
 DROP DATABASE IF EXISTS mylittlebank;
 CREATE DATABASE mylittlebank;
-
+CONNECT TO mylittlebank;
 DROP TABLE IF EXISTS account CASCADE;
 DROP TABLE IF EXISTS transaction CASCADE;
 DROP TABLE IF EXISTS exchange_rate CASCADE;
@@ -36,7 +36,7 @@ INSERT INTO transaction_type (name) VALUES ('CARD'), ('CHECK'), ('TRANSFER');
 
 CREATE TABLE transaction (
     transaction_id SERIAL PRIMARY KEY,
-    type VARCHAR(20) REFERENCES transaction_type(name) NOT NULL,
+    type int REFERENCES transaction_type(id) NOT NULL,
     source_account INT references account(account_number) NOT NULL,
     amount FLOAT NOT NULL,
     currency VARCHAR(3) references currency(code) NOT NULL,
