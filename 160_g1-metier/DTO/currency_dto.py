@@ -2,8 +2,8 @@ class Currency:
     def __init__(self):
         pass
 
-    def set_label(self, label):
-        self.label = label
+    def set_code(self, code):
+        self.code = code
 
-    def get_label(self):
+    def get_code(self):
         return self.code

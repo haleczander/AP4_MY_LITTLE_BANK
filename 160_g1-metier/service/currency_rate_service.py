@@ -1,4 +1,4 @@
-from repo.currency_rate_repo import CurrencyRateRepo
+from repo import CurrencyRateRepo
 from .service import Service
 
 

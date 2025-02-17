@@ -1,10 +1,11 @@
 from .repository import Repository
+from mappers import TransactionMapper
 from exceptions import NotEnoughMoneyException
 
 
 class TransactionRepo(Repository):
     def __init__(self):
-        super().__init__()
+        super().__init__(TransactionMapper())
 
     def get_by_account(self, account_id):
 

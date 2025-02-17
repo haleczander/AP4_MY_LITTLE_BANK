@@ -15,20 +15,20 @@ currency_service = CurrencyService()
 @account_bp.post(ENDPOINT)
 def post_account():
     data = request.get_json()
-    payload = {"sold": data.get("sold"), "currency": data.get("currency")}
+    payload = {"balance": data.get("balance"), "currency": data.get("currency")}
 
     # Check required fields
-    if not payload["sold"] or not payload["currency"]:
+    if not payload["balance"] or not payload["currency"]:
         return (
             jsonify(
-                {"error": "Les champs 'id_account', 'sold' et 'currency' sont requis."}
+                {"error": "Les champs 'id_account', 'balance' et 'currency' sont requis."}
             ),
             400,
         )
 
-    # Validate sold
-    if not isinstance(payload["sold"], (int, float)) or payload["sold"] < 0:
-        return jsonify({"error": "Solde invalide"}), 400
+    # Validate balance
+    if not isinstance(payload["balance"], (int, float)) or payload["balance"] < 0:
+        return jsonify({"error": "balancee invalide"}), 400
 
     # Validate currency
     if not isinstance(payload["currency"], str):
@@ -37,7 +37,7 @@ def post_account():
         return jsonify({"error": "Devise inexistante"}), 400
 
     # Create account
-    if account_service.create_account(payload["sold"], payload["currency"]) == 0:
+    if account_service.create_account(payload["balance"], payload["currency"]) == 0:
         return jsonify({"message": f"Account {payload['id_account']} created"}), 200
     else:
         abort(500)
@@ -114,7 +114,7 @@ def get_account_transfer(account):
     # Check if source account has enough balance
     source_balance = account_service.get_balance(payload["source_acc"])
     if source_balance < payload["amount"]:
-        return jsonify({"error": "Solde insuffisant"}), 400
+        return jsonify({"error": "balancee insuffisant"}), 400
 
     # Check if currencies match
     source_currency = account_service.get_currency(payload["source_acc"])

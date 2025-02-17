@@ -1,44 +1,72 @@
 from .repository import Repository
+from mappers import AccountMapper
+
 
 
 class AccountRepo(Repository):
+    ALL_FIELDS = ["id", "balance", "currency"]
+
     def __init__(self):
-        super().__init__()
+        super().__init__(AccountMapper())
+        
+    def _all_fields(self):
+        return ", ".join(self.ALL_FIELDS)
 
     # create
-    def create_account(self, id, sold, currency):
+    def create_account(self, balance, currency):
 
         self.connection.execute(
-            "INSERT INTO account (id, sold, currency) VALUES (%s, %s, %s)",
-            (id, sold, currency),
+            f"""
+            INSERT INTO account ( balance, currency) 
+            VALUES ( %s, %s )
+            RETURNING {self._all_fields()}
+            """,
+            ( balance, currency),
         )
-        self.connection.commit()
-        return 0
+        return self.map_to_dto( self.connection.fetchone() )
 
     # read
     def find_by_id(self, id):
 
-        self.connection.execute("SELECT * FROM account WHERE id = %s", (id,))
-        return self.connection.fetchone()
+        self.connection.execute(
+            f"""
+            SELECT {self._all_fields()} 
+            FROM account 
+            WHERE id = %s
+            """
+            , (id,))
+        return self.map_to_dto( self.connection.fetchone() )
 
     def get_balance(self, id):
 
-        self.connection.execute("SELECT sold FROM account WHERE id = %s", (id,))
+        self.connection.execute(
+            f"""
+            SELECT balance FROM account WHERE id = %s
+            """, (id,))
         return self.connection.fetchone()
 
     # update
-    def update_account(self, id, sold, currency):
+    def update_account(self, id, balance, currency):
 
         self.connection.execute(
-            "UPDATE account SET sold = %s, currency = %s WHERE id = %s",
-            (sold, currency, id),
+            f"""
+            UPDATE account 
+            SET balance = %s, currency = %s 
+            WHERE id = %s
+            RETURNING {self._all_fields()}
+            """,
+            (balance, currency, id),
         )
-        self.connection.commit()
-        return 0
+        return self.map_to_dto( self.connection.fetchone() )
+
 
     # delete
     def delete_account(self, id):
 
-        self.connection.execute("DELETE FROM account WHERE id = %s", (id,))
-        self.connection.commit()
-        return 0
+        self.connection.execute(
+            f"""
+            DELETE 
+            FROM account 
+            WHERE id = %s
+            """, (id,))
+        return 

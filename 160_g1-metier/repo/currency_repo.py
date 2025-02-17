@@ -4,8 +4,7 @@ from mappers import CurrencyMapper
 
 class CurrencyRepo(Repository):
     def __init__(self):
-        super().__init__()
-        self.mapper = CurrencyMapper()
+        super().__init__(CurrencyMapper())
 
     def get_currencies(self):
         try:

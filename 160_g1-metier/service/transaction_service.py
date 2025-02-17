@@ -1,5 +1,4 @@
-from repo.transaction_repo import TransactionRepo
-from service.account_service import AccountService
+from repo import TransactionRepo
 from dto import Transaction
 from .service import Service
 
@@ -9,7 +8,6 @@ class TransactionService(Service):
     def __init__(self):
         super().__init__()
         self.transaction_repo = TransactionRepo()
-        self.account_service = AccountService()
 
     # create
     def create_transaction(
@@ -18,15 +16,6 @@ class TransactionService(Service):
         self.transaction_repo.create_transaction(
             source_acc, destination_acc, currency, amount, label, datetime, type
         )
-        self.account_service.update_sold(
-            source_acc, self.account_service.get_balance(source_acc) - amount, currency
-        )
-        self.account_service.update_sold(
-            destination_acc,
-            self.account_service.get_balance(destination_acc) + amount,
-            currency,
-        )
-        return
 
     # read
     def find_by_id(self, id):
