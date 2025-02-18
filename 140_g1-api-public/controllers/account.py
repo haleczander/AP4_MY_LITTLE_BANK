@@ -16,14 +16,14 @@ ACCOUNT = "<account>"
 
 @account_bp.get(f"{ENDPOINT}/{ACCOUNT}/balance")
 def get_account_balance(account):
-    return get(f"{API}{ENDPOINT}/{account}/balance")
+    return get(f"{API}{ENDPOINT}/{account}/balance").content
     
 
 @account_bp.get(f"{ENDPOINT}/{ACCOUNT}/details")
 def get_account_details(account):
-    return get(f"{API}{ENDPOINT}/{account}/details")
+    return get(f"{API}{ENDPOINT}/{account}/details").content
 
 
 @account_bp.post(f"{ENDPOINT}/{ACCOUNT}/transfer")
 def post_account_transfer(account):
-    return post(f"{ENDPOINT}/{account}/transfer", json=request.get_json())
+    return post(f"{ENDPOINT}/{account}/transfer", json=request.get_json()).content

@@ -9,5 +9,5 @@ ACCOUNT = "<account>"
 
 @account_bp.get(f"{ENDPOINT}/{ACCOUNT}/exists")
 def get_account_exists(account):
-    return requests.get(f"{API}{ENDPOINT}/{account}/exists")
+    return requests.get(f"{API}{ENDPOINT}/{account}/exists").content
 
