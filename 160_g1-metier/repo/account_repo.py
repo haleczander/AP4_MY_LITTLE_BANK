@@ -14,7 +14,7 @@ class AccountRepo(Repository):
 
     # create
     def create_account(self, balance, currency):
-        self.connection.begin()
+        self.begin()
         self.connection.execute(
             f"""
             INSERT INTO account ( balance, currency) 
@@ -23,12 +23,12 @@ class AccountRepo(Repository):
             """,
             ( balance, currency),
         )
-        self.connection.commit()
+        self.commit()
         return self.map_to_dto( self.connection.fetchone() )
 
     # read
     def find_by_id(self, id):
-
+        
         self.connection.execute(
             f"""
             SELECT {self._all_fields()} 
