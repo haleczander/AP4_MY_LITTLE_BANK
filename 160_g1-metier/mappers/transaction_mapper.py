@@ -6,6 +6,8 @@ class TransactionMapper(Mapper):
         pass
     
     def map_to_dto(self, fetched):
+        if not fetched:
+            return
         id_transaction, account_number, amount, transaction_date, transaction_type = fetched
         transaction = Transaction()
         transaction.set_id_transaction(id_transaction)

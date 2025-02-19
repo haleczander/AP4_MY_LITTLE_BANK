@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from service.currency_service import CurrencyService
 from service.currency_rate_service import CurrencyRateService
 
@@ -28,5 +28,15 @@ def get_currency_allowed(currency):
 
 @currency_bp.post(f"{CURRENCY_ENDPOINT}/rate")
 def post_currency_rate(currency):
-    currency_rate_service.getCurrencyRate(currency)
-    return f"<p>Rate for {currency} is 1.23</p>"
+    data = request.get_json()
+    if not data or 'rate' not in data or 'currency' not in data:
+        return {"message": "Invalid parameters"}, 400
+
+    rate = data['rate']
+    target_currency = data['currency']
+
+    try:
+        currency_rate_service.set_currency_rate(currency, target_currency, rate)
+        return {"message": "Rate has been set successfully"}, 200
+    except NotImplementedError:
+        return {"message": "Currencies not implemented"}, 501

@@ -93,6 +93,7 @@ class TransactionRepo(Repository):
                 """
             INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id, source_acc, destination_acc, currency, amount, label, transaction_date, type
             """,
                 (
                     source_acc,
@@ -104,7 +105,9 @@ class TransactionRepo(Repository):
                     type,
                 ),
             )
+            transaction = self.map_to_dto( self.connection.fetchone() )
             self.connection.commit()
+            return transaction
         except Exception as e:
             self.connection.rollback()
             raise e

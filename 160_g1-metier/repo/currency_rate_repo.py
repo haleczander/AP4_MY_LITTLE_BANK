@@ -5,6 +5,5 @@ class CurrencyRateRepo(Repository):
     def __init__(self):
         super().__init__(CurrencyRateMapper())
 
-    def get_currency(self, label):
-
+    def set_currency_rate(self, currency, target_currency, rate):
         return "tbd"
