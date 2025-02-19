@@ -43,13 +43,11 @@ def get_account_exists(account):
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/balance")
 def get_account_balance(account):
+    
     balance = account_service.get_balance(account)
-    if balance == 0:
-        return f"<p>Balance : {balance}</p>"
-    elif balance == -1:
-        abort(404, "Can't find balance")
-    else:
-        abort(500)
+    if not balance :
+        return jsonify({"error": "Compte introuvable"}), 404
+    return jsonify({"balance": balance})
 
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/details")
