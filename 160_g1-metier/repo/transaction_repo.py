@@ -59,7 +59,7 @@ class TransactionRepo(Repository):
         type,
     ):
         try:
-            self.connection.begin()
+            self.begin()
             self.connection.execute(
                 """
             UPDATE account 
@@ -106,7 +106,7 @@ class TransactionRepo(Repository):
                 ),
             )
             transaction = self.map_to_dto( self.connection.fetchone() )
-            self.connection.commit()
+            self.commit()
             return transaction
         except Exception as e:
             self.connection.rollback()

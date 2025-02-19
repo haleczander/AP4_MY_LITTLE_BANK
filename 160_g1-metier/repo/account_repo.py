@@ -48,7 +48,7 @@ class AccountRepo(Repository):
 
     # update
     def update_account(self, id, balance, currency):
-
+        self.begin()
         self.connection.execute(
             f"""
             UPDATE account 
@@ -58,6 +58,7 @@ class AccountRepo(Repository):
             """,
             (balance, currency, id),
         )
+        self.commit()
         return self.map_to_dto( self.connection.fetchone() )
 
 
