@@ -35,12 +35,8 @@ def post_account():
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/exists")
 def get_account_exists(account):
-    if not isinstance(account, int):
-        abort(400, "Identifiant invalide")
-    if not account_service.is_account_exists(account):
-        abort(404, "Compte introuvable")
-    else:
-        return f"<p>Account {account} exists</p>"
+    acc = account_service.get_account(account)
+    return jsonify(not not acc)
 
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/balance")
