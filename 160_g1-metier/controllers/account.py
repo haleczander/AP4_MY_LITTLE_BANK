@@ -15,32 +15,20 @@ currency_service = CurrencyService()
 @account_bp.post(ENDPOINT)
 def post_account():
     data = request.get_json()
-    payload = {"balance": data.get("balance"), "currency": data.get("currency")}
+    payload = {"balance": data.get("balance")}
+    
+    if not "balance" in data:
+        return jsonify({"error": "Le champ 'balance' est requis."}), 400
+    
+    try:
+        account = account_service.create_account( payload["balance"] )
+        if account is None:
+            return jsonify({"error": "Erreur lors de la création du compte"}), 500
+        return jsonify({"message": "Compte créé", "account": account}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-    # Check required fields
-    if not payload["balance"] or not payload["currency"]:
-        return (
-            jsonify(
-                {"error": "Les champs 'id_account', 'balance' et 'currency' sont requis."}
-            ),
-            400,
-        )
 
-    # Validate balance
-    if not isinstance(payload["balance"], (int, float)) or payload["balance"] < 0:
-        return jsonify({"error": "balancee invalide"}), 400
-
-    # Validate currency
-    if not isinstance(payload["currency"], str):
-        return jsonify({"error": "Devise invalide"}), 400
-    if not currency_service.check_currency(payload["currency"]):
-        return jsonify({"error": "Devise inexistante"}), 400
-
-    # Create account
-    if account_service.create_account(payload["balance"], payload["currency"]) == 0:
-        return jsonify({"message": f"Account {payload['id_account']} created"}), 200
-    else:
-        abort(500)
 
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/exists")
