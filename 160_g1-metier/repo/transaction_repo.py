@@ -10,15 +10,15 @@ class TransactionRepo(Repository):
     def get_by_account(self, account_id):
 
         self.connection.execute(
-            """
-            SELECT * FROM transaction 
-            WHERE source_acc = %s OR destination_acc = %s 
-            ORDER BY transaction_date DESC 
-            LIMIT 50
+        """
+        SELECT * FROM transaction 
+        WHERE source_acc = %s OR destination_acc = %s 
+        ORDER BY transaction_date DESC 
+        LIMIT 50
         """,
             (account_id, account_id),
         )
-        return self.connection.fetchall()
+        return [self.map_to_dto(fetched) for fetched in self.connection.fetchall()]
 
     def get_by_id(self, id):
         self.connection.execute(

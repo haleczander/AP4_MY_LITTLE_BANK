@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
 from service.account_service import AccountService
 from service.currency_service import CurrencyService
+from service.transaction_service import TransactionService
 
 account_bp = Blueprint("account", __name__)
 
@@ -9,6 +10,7 @@ ACCOUNT_ENDPOINT = f"{ENDPOINT}/<account>"
 
 account_service = AccountService()
 currency_service = CurrencyService()
+transaction_service = TransactionService()
 
 
 # Account
@@ -52,7 +54,7 @@ def get_account_balance(account):
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/details")
 def get_account_details(account):
-    details = account_service.get_details(account)
+    details = transaction_service.get_transactions_by_account(account)
     if details == 0:
         return f"<p>Details : {details}</p>"
     else:
