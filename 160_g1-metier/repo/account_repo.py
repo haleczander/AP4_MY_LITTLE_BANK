@@ -13,18 +13,23 @@ class AccountRepo(Repository):
         return ", ".join(self.ALL_FIELDS)
 
     # create
-    def create_account(self, balance, currency):
-        self.begin()
-        self.connection.execute(
-            f"""
-            INSERT INTO account ( balance, currency) 
-            VALUES ( %s, %s )
-            RETURNING {self._all_fields()}
-            """,
-            ( balance, currency),
-        )
-        self.commit()
-        return self.map_to_dto( self.connection.fetchone() )
+def create_account(self, balance, currency):
+    self.begin()
+    cursor = self.connection.execute(
+        """
+        INSERT INTO account (balance, currency) 
+        VALUES (%s, %s) 
+        RETURNING account_number, balance, currency
+        """,
+        (balance, currency),
+    )
+    self.commit()
+    
+    account_data = cursor.fetchone()
+    if account_data is None:
+        raise Exception("Account creation failed: no data returned")
+    
+    return self.map_to_dto(account_data)
 
     # read
     def find_by_id(self, id):
