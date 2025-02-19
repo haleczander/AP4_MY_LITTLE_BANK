@@ -8,7 +8,7 @@ class TransactionRepo(Repository):
         super().__init__(TransactionMapper())
 
     def get_by_account(self, account_id):
-
+        self.begin()
         self.connection.execute(
         """
         SELECT * FROM transaction 
@@ -18,6 +18,7 @@ class TransactionRepo(Repository):
         """,
             (account_id, account_id),
         )
+        self.commit()
         return [self.map_to_dto(fetched) for fetched in self.connection.fetchall()]
 
     def get_by_id(self, id):

@@ -61,20 +61,18 @@ def get_account_details(account):
 def get_account_transfer(account):
     data = request.get_json()
     payload = {
-        "source_acc": data.get("source_acc"),
-        "destination_acc": data.get("destination_acc"),
-        "currency": data.get("currency"),
         "amount": data.get("amount"),
+        "currency": data.get("currency"),
         "label": data.get("label"),
-        "datetime": data.get("datetime"),
+        "recipient": data.get("recipient")
     }
 
     # Check required fields
     if (
-        not payload["source_acc"]
-        or not payload["destination_acc"]
+        not payload["amount"]
         or not payload["currency"]
-        or not payload["amount"]
+        or not payload["label"]
+        or not payload["recipient"]
     ):
         return (
             jsonify(
@@ -85,49 +83,9 @@ def get_account_transfer(account):
             400,
         )
 
-    # Validate destination account
-    if not isinstance(payload["destination_acc"], int):
-        return jsonify({"error": "Identifiant invalide"}), 400
-    if not account_service.is_account_exists(payload["destination_acc"]):
-        return jsonify({"error": "Compte destination introuvable"}), 400
-
-    # Validate label
-    if not payload["label"]:
-        return jsonify({"error": "Libellé requis"}), 400
-
-    # Check if source account has enough balance
-    source_balance = account_service.get_balance(payload["source_acc"])
-    if source_balance < payload["amount"]:
-        return jsonify({"error": "balancee insuffisant"}), 400
-
-    # Check if currencies match
-    source_currency = account_service.get_currency(payload["source_acc"])
-    destination_currency = account_service.get_currency(payload["destination_acc"])
-    if source_currency != destination_currency:
-        # Perform currency conversion if needed
-        converted_amount = currency_service.convert_currency(
-            payload["amount"], source_currency, destination_currency
-        )
-        if converted_amount is None:
-            return jsonify({"error": "Erreur de conversion de devise"}), 400
-        payload["amount"] = converted_amount
-
-    # Debit source account
-    if not account_service.debit_account(payload["source_acc"], payload["amount"]):
-        return jsonify({"error": "Erreur lors du débit du compte source"}), 500
-
-    # Credit destination account
-    if not account_service.credit_account(
-        payload["destination_acc"], payload["amount"]
-    ):
-        return jsonify({"error": "Erreur lors du crédit du compte destination"}), 500
-
-    # Update transaction in database
-    transaction_id = account_service.create_transaction(payload)
-    if transaction_id is None:
-        return jsonify({"error": "Erreur lors de la création de la transaction"}), 500
-
-    return (
-        jsonify({"message": "Virement réussi", "transaction_id": transaction_id}),
-        200,
+    if not account_service.get_account(account):
+        return jsonify({"error": "Compte source introuvable"}), 404
+    
+    transaction_service.create_transaction(
+        account, payload["recipient"], payload["currency"], payload["amount"], "now()", payload["label"], "TRANSFER"
     )
