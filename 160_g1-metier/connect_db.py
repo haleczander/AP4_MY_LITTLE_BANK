@@ -10,4 +10,4 @@ def connect():
         host=CONFIG["DB_HOST"],
         port=CONFIG["DB_PORT"],
     )
-    return conn.cursor()
+    return conn

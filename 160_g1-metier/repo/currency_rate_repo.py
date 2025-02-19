@@ -11,8 +11,10 @@ class CurrencyRateRepo(Repository):
         return ", ".join(self.ALL_FIELDS)
 
     def set_currency_rate(self, currency, target_currency, rate):
-        self.begin()
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        self.begin(cursor)
+        cursor.execute(
             f"""
             INSERT INTO currency_rate (currency, target_currency, rate) 
             VALUES ( %s, %s, %s )
@@ -20,5 +22,5 @@ class CurrencyRateRepo(Repository):
             """,
             (currency, target_currency, rate),
         )
-        self.commit()
+        self.commit(cursor)
         return self.map_to_dto( self.connection.fetchone() )

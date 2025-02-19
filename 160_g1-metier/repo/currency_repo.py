@@ -15,5 +15,7 @@ class CurrencyRepo(Repository):
             raise e
 
     def get_currency(self, label):
-        self.connection.execute("SELECT * FROM currency WHERE code = %s", (label,))
+        cursor = self.connection.cursor()
+
+        cursor.execute("SELECT * FROM currency WHERE code = %s", (label,))
         return self.mapper.map_to_dto(self.connection.fetchone())

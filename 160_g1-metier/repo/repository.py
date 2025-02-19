@@ -9,11 +9,11 @@ class Repository:
     def map_to_dto( self, fetched ):
         return self.mapper.map_to_dto( fetched )
     
-    def begin( self ):
-        self.connection.execute("BEGIN")
+    def begin( self, cursor ):
+        cursor.execute("BEGIN")
         
-    def commit( self ):
-        self.connection.execute("COMMIT")
+    def commit( self, cursor ):
+        cursor.execute("COMMIT")
         
-    def rollback( self ):
-        self.connection.execute("ROLLBACK")
+    def rollback( self, cursor ):
+        cursor.execute("ROLLBACK")

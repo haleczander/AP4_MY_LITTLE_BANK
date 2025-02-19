@@ -8,8 +8,10 @@ class TransactionRepo(Repository):
         super().__init__(TransactionMapper())
 
     def get_by_account(self, account_id):
-        self.begin()
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        self.begin(cursor)
+        cursor.execute(
         """
         SELECT * FROM transaction 
         WHERE source_acc = %s OR destination_acc = %s 
@@ -18,11 +20,13 @@ class TransactionRepo(Repository):
         """,
             (account_id, account_id),
         )
-        self.commit()
+        self.commit(cursor)
         return [self.map_to_dto(fetched) for fetched in self.connection.fetchall()]
 
     def get_by_id(self, id):
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        cursor.execute(
             """
             SELECT * FROM transaction 
             WHERE id = %s
@@ -32,7 +36,9 @@ class TransactionRepo(Repository):
         return self.connection.fetchone()
 
     def create_transaction(self, transaction):
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        cursor.execute(
             """
             INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -60,8 +66,10 @@ class TransactionRepo(Repository):
         type,
     ):
         try:
-            self.begin()
-            self.connection.execute(
+            cursor = self.connection.cursor()
+
+            self.begin(cursor)
+            cursor.execute(
                 """
             UPDATE account 
             SET balance = balance - %s 
@@ -70,7 +78,9 @@ class TransactionRepo(Repository):
                 (amount, source_acc),
             )
 
-            self.connection.execute(
+            cursor = self.connection.cursor()
+
+            cursor.execute(
                 """
             SELECT balance FROM account 
             WHERE id = %s
@@ -81,7 +91,9 @@ class TransactionRepo(Repository):
             if balance < 0:
                 raise NotEnoughMoneyException()
 
-            self.connection.execute(
+            cursor = self.connection.cursor()
+
+            cursor.execute(
                 """
             UPDATE account 
             SET balance = balance + %s 
@@ -90,7 +102,9 @@ class TransactionRepo(Repository):
                 (amount, destination_acc),
             )
 
-            self.connection.execute(
+            cursor = self.connection.cursor()
+
+            cursor.execute(
                 """
             INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
@@ -107,8 +121,8 @@ class TransactionRepo(Repository):
                 ),
             )
             transaction = self.map_to_dto( self.connection.fetchone() )
-            self.commit()
+            self.commit(cursor)
             return transaction
         except Exception as e:
-            self.connection.rollback()
+            self.rollback(cursor)
             raise e
