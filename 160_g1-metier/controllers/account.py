@@ -21,7 +21,7 @@ def post_account():
         return jsonify({"error": "Le champ 'balance' est requis."}), 400
     
     try:
-        account = account_service.create_account( payload["balance"] )
+        account = account_service.create_account( payload["balance"], 'EUR' )
         if account is None:
             return jsonify({"error": "Erreur lors de la création du compte"}), 500
         return jsonify({"message": "Compte créé", "account": account}), 201
