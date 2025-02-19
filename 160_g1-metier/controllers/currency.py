@@ -35,8 +35,4 @@ def post_currency_rate(currency):
     rate = data['rate']
     target_currency = data['currency']
 
-    try:
-        currency_rate_service.set_currency_rate(currency, target_currency, rate)
-        return {"message": "Rate has been set successfully"}, 200
-    except NotImplementedError:
-        return {"message": "Currencies not implemented"}, 501
+    return currency_rate_service.set_currency_rate(currency, target_currency, rate)
