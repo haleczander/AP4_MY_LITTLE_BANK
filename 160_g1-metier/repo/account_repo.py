@@ -4,7 +4,7 @@ from mappers import AccountMapper
 
 
 class AccountRepo(Repository):
-    ALL_FIELDS = ["id", "balance", "currency"]
+    ALL_FIELDS = ["account_number", "balance", "currency"]
 
     def __init__(self):
         super().__init__(AccountMapper())
