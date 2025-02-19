@@ -47,7 +47,7 @@ def get_account_balance(account):
     balance = account_service.get_balance(account)
     if not balance :
         return jsonify({"error": "Compte introuvable"}), 404
-    return jsonify({"balance": balance})
+    return jsonify(balance)
 
 
 @account_bp.get(f"{ACCOUNT_ENDPOINT}/details")
