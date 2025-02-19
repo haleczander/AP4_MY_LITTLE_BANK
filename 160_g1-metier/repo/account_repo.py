@@ -33,7 +33,7 @@ class AccountRepo(Repository):
             f"""
             SELECT {self._all_fields()} 
             FROM account 
-            WHERE id = %s
+            WHERE account_number = %s
             """
             , (id,))
         return self.map_to_dto( self.connection.fetchone() )
@@ -42,7 +42,7 @@ class AccountRepo(Repository):
 
         self.connection.execute(
             f"""
-            SELECT balance FROM account WHERE id = %s
+            SELECT balance FROM account WHERE account_number = %s
             """, (id,))
         return self.connection.fetchone()
 
@@ -53,7 +53,7 @@ class AccountRepo(Repository):
             f"""
             UPDATE account 
             SET balance = %s, currency = %s 
-            WHERE id = %s
+            WHERE account_number = %s
             RETURNING {self._all_fields()}
             """,
             (balance, currency, id),
@@ -69,6 +69,6 @@ class AccountRepo(Repository):
             f"""
             DELETE 
             FROM account 
-            WHERE id = %s
+            WHERE account_number = %s
             """, (id,))
         return 
