@@ -9,10 +9,12 @@ CURRENCY = "<currency>"
 
 @currency_bp.get(f"{ENDPOINT}/{CURRENCY}/allowed")
 def get_currency_allowed(currency):
-    return requests.get(f"{API}{ENDPOINT}/{currency}/allowed").content
+    response = requests.get(f"{API}{ENDPOINT}/{currency}/allowed")
+    return response.content, response.status_code
 
 
 @currency_bp.post(f"{ENDPOINT}/{CURRENCY}/rate")
 def post_currency_rate(currency):
-    return requests.post(f"{API}{ENDPOINT}/{currency}/rate", json=request.get_json()).content
+    response = requests.post(f"{API}{ENDPOINT}/{currency}/rate", json=request.get_json())
+    return response.content, response.status_code
 

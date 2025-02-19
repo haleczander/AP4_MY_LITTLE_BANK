@@ -1,6 +1,8 @@
 from .repository import Repository
 from mappers import TransactionMapper
 from exceptions import NotEnoughMoneyException
+from psycopg2.extras import RealDictCursor
+
 
 
 class TransactionRepo(Repository):
@@ -8,32 +10,41 @@ class TransactionRepo(Repository):
         super().__init__(TransactionMapper())
 
     def get_by_account(self, account_id):
-
-        self.connection.execute(
-            """
-            SELECT * FROM transaction 
-            WHERE source_acc = %s OR destination_acc = %s 
-            ORDER BY transaction_date DESC 
-            LIMIT 50
+        cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+        self.begin(cursor)
+        cursor.execute(
+        """
+        SELECT transaction_id, type, dest_account, amount, currency, label, source_account, timestamp
+        FROM transaction
+        WHERE source_account = %s 
+        ORDER BY timestamp DESC 
+        LIMIT 50
         """,
-            (account_id, account_id),
+            (account_id,),
         )
-        return self.connection.fetchall()
+        results = cursor.fetchall() if cursor.description else []
+        self.commit(cursor)
+        return [self.map_to_dto(fetched) for fetched in results]
 
     def get_by_id(self, id):
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        cursor.execute(
             """
             SELECT * FROM transaction 
-            WHERE id = %s
+            WHERE transaction_id = %s
         """,
             (id),
         )
-        return self.connection.fetchone()
+        result = cursor.fetchone() if cursor.description else None
+        return self.map_to_dto(result)
 
     def create_transaction(self, transaction):
-        self.connection.execute(
+        cursor = self.connection.cursor()
+
+        cursor.execute(
             """
-            INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
+            INSERT INTO transaction (source_account, destination_account, currency, amount, label, timestamp, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """,
             (
@@ -59,40 +70,48 @@ class TransactionRepo(Repository):
         type,
     ):
         try:
-            self.connection.begin()
-            self.connection.execute(
+            cursor = self.connection.cursor(cursor_factory=RealDictCursor)
+
+            self.begin(cursor)
+            cursor.execute(
                 """
             UPDATE account 
             SET balance = balance - %s 
-            WHERE id = %s
+            WHERE account_number = %s
             """,
                 (amount, source_acc),
             )
 
-            self.connection.execute(
-                """
-            SELECT balance FROM account 
-            WHERE id = %s
-            """,
-                (source_acc),
-            )
-            balance = self.connection.fetchone()[0]
-            if balance < 0:
-                raise NotEnoughMoneyException()
-
-            self.connection.execute(
+            cursor.execute(
                 """
             UPDATE account 
             SET balance = balance + %s 
-            WHERE id = %s
+            WHERE account_number = %s
             """,
                 (amount, destination_acc),
             )
+            
+            cursor.execute(
+            """
+                SELECT balance 
+                FROM account 
+                WHERE account_number = %s
+            """,
+                (source_acc,),
+            )
+            balance = cursor.fetchone()["balance"] if cursor.description else None
+            if not balance:
+                raise Exception("Account not found")
+            elif balance < 0:
+                self.rollback(cursor)
+                return 
+                # raise NotEnoughMoneyException()
 
-            self.connection.execute(
+            cursor.execute(
                 """
-            INSERT INTO transaction (source_acc, destination_acc, currency, amount, label, transaction_date, type)
+            INSERT INTO transaction (source_account, dest_account, currency, amount, label, timestamp, type)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING transaction_id, source_account, dest_account, currency, amount, label, timestamp, type
             """,
                 (
                     source_acc,
@@ -104,7 +123,28 @@ class TransactionRepo(Repository):
                     type,
                 ),
             )
-            self.connection.commit()
+
+
+            cursor.execute(
+                """
+            INSERT INTO transaction (dest_account, source_account, currency, amount, label, timestamp, type)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING transaction_id, source_account, dest_account, currency, amount, label, timestamp, type
+            """,
+                (
+                    source_acc,
+                    destination_acc,
+                    currency,
+                    -amount,
+                    label,
+                    transaction_date,
+                    type,
+                ),
+            )
+            result = cursor.fetchone() if cursor.description else None
+            transaction = self.map_to_dto( result )
+            self.commit(cursor)
+            return transaction
         except Exception as e:
-            self.connection.rollback()
+            self.rollback(cursor)
             raise e

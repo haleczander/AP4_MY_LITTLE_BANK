@@ -6,8 +6,11 @@ class CurrencyRateMapper(Mapper):
         pass
     
     def map_to_dto(self, fetched):
-        ref_currency, other_currency, rate = fetched
+        if not fetched:
+            return
+        id, ref_currency, other_currency, rate = fetched
         currency_rate = CurrencyRate()
+        currency_rate.set_id(id)
         currency_rate.set_ref_currency(ref_currency)
         currency_rate.set_other_currency(other_currency)
         currency_rate.set_rate(rate)

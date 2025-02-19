@@ -6,6 +6,8 @@ class FraisBancaireMapper(Mapper):
         pass
     
     def map_to_dto(self, fetched):
+        if not fetched:
+            return
         id_frais, type_frais, montant = fetched
         frais_bancaire = FraisBancaire()
         frais_bancaire.set_id_frais(id_frais)

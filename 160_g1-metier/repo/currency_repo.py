@@ -8,12 +8,18 @@ class CurrencyRepo(Repository):
 
     def get_currencies(self):
         try:
-            self.connection.execute("SELECT * FROM currency")
-            return [self.mapper.map_to_dto(row) for row in self.connection.fetchall()]
+            cursor = self.connection.cursor()
+            cursor.execute("SELECT * FROM currency")
+            results = cursor.fetchall() if cursor.description else []
+            return [self.mapper.map_to_dto(row) for row in results]
         except Exception as e:
-            self.connection.execute("ROLLBACK")
+            self.rollback(cursor)
             raise e
 
     def get_currency(self, label):
-        self.connection.execute("SELECT * FROM currency WHERE code = %s", (label,))
-        return self.mapper.map_to_dto(self.connection.fetchone())
+        cursor = self.connection.cursor()
+
+        cursor.execute("SELECT * FROM currency WHERE code = %s", (label,))
+        result = cursor.fetchone() if cursor.description else None
+
+        return self.mapper.map_to_dto(result)

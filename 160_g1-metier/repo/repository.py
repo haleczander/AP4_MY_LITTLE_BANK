@@ -8,3 +8,12 @@ class Repository:
         
     def map_to_dto( self, fetched ):
         return self.mapper.map_to_dto( fetched )
+    
+    def begin( self, cursor ):
+        cursor.execute("BEGIN")
+        
+    def commit( self, cursor ):
+        cursor.execute("COMMIT")
+        
+    def rollback( self, cursor ):
+        cursor.execute("ROLLBACK")

@@ -10,7 +10,6 @@ class AccountService(Service):
     def __init__(self):
         super().__init__()
         self.account_repo = AccountRepo()
-        # self.transaction_service = TransactionService()
 
     # create
     def create_account(self, balance, currency):
@@ -27,10 +26,7 @@ class AccountService(Service):
         return account
 
     def get_balance(self, id):
-        return self.account_repo.get_balance()
-
-    def get_details(self, id):
-        return self.transaction_service.get_transactions_by_account(id)
+        return self.account_repo.get_balance(id)
         
     # update
     def update_balance(self, id, balance, currency):
@@ -39,3 +35,10 @@ class AccountService(Service):
     def transfer(self, source_acc, destination_acc, currency, amount):
         # self.transaction_service.create_transaction(source_acc, destination_acc, currency, amount, "transfer")
         return 0
+    
+    def json(self, account):
+        return {
+            "account": account.account_number,
+            "balance": account.balance,
+            "currency": account.currency
+        }

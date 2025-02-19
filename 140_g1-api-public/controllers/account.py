@@ -9,21 +9,25 @@ ENDPOINT = "/account"
 
 @account_bp.post(ENDPOINT)
 def post_account_exists():
-    return post(f"{API}{ENDPOINT}", json=request.get_json()).content
+    response = post(f"{API}{ENDPOINT}", json=request.get_json())
+    return response.content, response.status_code
     
 
 ACCOUNT = "<account>"
 
 @account_bp.get(f"{ENDPOINT}/{ACCOUNT}/balance")
 def get_account_balance(account):
-    return get(f"{API}{ENDPOINT}/{account}/balance").content
+    response = get(f"{API}{ENDPOINT}/{account}/balance")
+    return response.content, response.status_code
     
 
 @account_bp.get(f"{ENDPOINT}/{ACCOUNT}/details")
 def get_account_details(account):
-    return get(f"{API}{ENDPOINT}/{account}/details").content
+    response = get(f"{API}{ENDPOINT}/{account}/details")
+    return response.content, response.status_code
 
 
 @account_bp.post(f"{ENDPOINT}/{ACCOUNT}/transfer")
 def post_account_transfer(account):
-    return post(f"{ENDPOINT}/{account}/transfer", json=request.get_json()).content
+    response = post(f"{API}{ENDPOINT}/{account}/transfer", json=request.get_json())
+    return response.content, response.status_code

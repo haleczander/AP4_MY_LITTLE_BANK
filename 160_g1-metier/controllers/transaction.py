@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from service.transaction_service import TransactionService
 from service.account_service import AccountService
+import datetime
 
 transaction_bp = Blueprint("transaction", __name__)
 
@@ -14,114 +15,122 @@ account_service = AccountService()
 def post_transaction_card():
     data = request.get_json()
     payload = {
-        "source_acc": data.get("source_acc"),
-        "destination_acc": data.get("destination_acc"),
+        "sourceAccount": data.get("sourceAccount"),
+        "destAccount": data.get("destAccount"),
         "currency": data.get("currency"),
         "amount": data.get("amount"),
-        "label": data.get("label"),
+        "merchant": data.get("merchant"),
         "datetime": data.get("datetime"),
     }
     if (
-        not payload["source_acc"]
-        or not payload["destination_acc"]
+        not payload["sourceAccount"]
+        or not payload["destAccount"]
         or not payload["currency"]
         or not payload["amount"]
+        or not payload["merchant"]
     ):
         return (
             jsonify(
                 {
-                    "error": "Les champs 'source_acc', 'destination_acc', 'currency' et 'amount' sont requis."
+                    "error": "Les champs 'sourceAccount', 'destAccount', 'currency', 'amount' et 'merchant' sont requis."
                 }
             ),
             400,
         )
 
-    transaction_service.create_transaction(
-        payload["source_acc"],
-        payload["destination_acc"],
+
+    transaction = transaction_service.create_transaction(
+        payload["sourceAccount"],
+        payload["destAccount"],
         payload["currency"],
         payload["amount"],
-        payload["label"],
-        payload["datetime"],
-        "card",
+        datetime.datetime.now(),
+        payload["merchant"],
+        "CARD",
     )
 
-    return "<p>Transaction with card done </p>"
+    # if not transaction:
+    #     return jsonify({"error": "Erreur lors de la transaction"}), 500
+    return jsonify(transaction_service.json_transfer(transaction)), 200
 
 
 @transaction_bp.post(f"{ENDPOINT}/check")
 def post_transaction_check():
     data = request.get_json()
     payload = {
-        "source_acc": data.get("source_acc"),
-        "destination_acc": data.get("destination_acc"),
+        "sourceAccount": data.get("sourceAccount"),
+        "destAccount": data.get("destAccount"),
         "currency": data.get("currency"),
         "amount": data.get("amount"),
-        "label": data.get("label"),
         "datetime": data.get("datetime"),
     }
     if (
-        not payload["source_acc"]
-        or not payload["destination_acc"]
+        not payload["sourceAccount"]
+        or not payload["destAccount"]
         or not payload["currency"]
         or not payload["amount"]
     ):
         return (
             jsonify(
                 {
-                    "error": "Les champs 'source_acc', 'destination_acc', 'currency' et 'amount' sont requis."
+                    "error": "Les champs 'sourceAccount', 'destAccount', 'currency' et 'amount' sont requis."
                 }
             ),
             400,
         )
 
-    transaction_service.create_transaction(
-        payload["source_acc"],
-        payload["destination_acc"],
+    transaction = transaction_service.create_transaction(
+        payload["sourceAccount"],
+        payload["destAccount"],
         payload["currency"],
         payload["amount"],
-        payload["label"],
-        payload["datetime"],
-        "check",
+        datetime.datetime.now(),
+        "",
+        "CHECK"
     )
 
-    return "<p>Transaction with check</p>"
-
+    if not transaction:
+        return jsonify({"error": "Erreur lors de la transaction"}), 500
+    return jsonify(transaction_service.json_transfer(transaction)), 200
 
 @transaction_bp.post(f"{ENDPOINT}/transfer")
 def post_transaction_transfer():
     data = request.get_json()
     payload = {
-        "source_acc": data.get("source_acc"),
-        "destination_acc": data.get("destination_acc"),
+        "sourceAccount": data.get("sourceAccount"),
+        "destAccount": data.get("destAccount"),
         "currency": data.get("currency"),
         "amount": data.get("amount"),
         "label": data.get("label"),
-        "datetime": data.get("datetime"),
     }
     if (
-        not payload["source_acc"]
-        or not payload["destination_acc"]
+        not payload["sourceAccount"]
+        or not payload["destAccount"]
         or not payload["currency"]
         or not payload["amount"]
     ):
         return (
             jsonify(
                 {
-                    "error": "Les champs 'source_acc', 'destination_acc', 'currency' et 'amount' sont requis."
+                    "error": "Les champs 'sourceAccount', 'destAccount', 'currency' et 'amount' sont requis."
                 }
             ),
             400,
         )
-
-    transaction_service.create_transaction(
-        payload["source_acc"],
-        payload["destination_acc"],
+    amount = payload["amount"]
+    if amount == 'EUR':
+        payload["amount"] = payload["currency"]
+        payload["currency"] = amount
+    transaction = transaction_service.create_transaction(
+        payload["sourceAccount"],
+        payload["destAccount"],
         payload["currency"],
         payload["amount"],
+        datetime.datetime.now(),
         payload["label"],
-        payload["datetime"],
-        "transfer",
+        "TRANSFER",
     )
 
-    return "<p>Transaction with transfer</p>"
+    if not transaction:
+        return jsonify({"error": "Erreur lors de la transaction"}), 500
+    return jsonify(transaction_service.json_transfer(transaction)), 200

@@ -6,10 +6,12 @@ class AccountMapper(Mapper):
         pass
     
     def map_to_dto(self, fetched):
-        account_number, currency, balance = fetched
+        if not fetched:
+            return
+        account_number, balance, currency = fetched["account_number"], fetched["balance"], fetched["currency"]
         account = Account()
         account.set_account_number(account_number)
         account.set_currency(currency)
-        account.set_balance(balance)
+        account.set_balance(float(balance))
         return account
         

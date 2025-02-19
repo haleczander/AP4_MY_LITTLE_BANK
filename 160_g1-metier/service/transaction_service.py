@@ -11,9 +11,9 @@ class TransactionService(Service):
 
     # create
     def create_transaction(
-        self, source_acc, destination_acc, currency, amount, label, datetime, type
+        self, source_acc, destination_acc, currency, amount, datetime, label, type
     ):
-        self.transaction_repo.create_transaction(
+        return self.transaction_repo.execute_transaction(
             source_acc, destination_acc, currency, amount, label, datetime, type
         )
 
@@ -23,19 +23,22 @@ class TransactionService(Service):
         return transaction
 
     def get_transactions_by_account(self, account_id):
-        transactions = self.transaction_repo.get_by_account(account_id)
-        transactionList = []
-        for transaction in transactions:
-            transactionList.append(
-                Transaction(
-                    transaction.id,
-                    transaction.source_acc,
-                    transaction.destination_acc,
-                    transaction.currency,
-                    transaction.amount,
-                    transaction.label,
-                    transaction.datetime,
-                    transaction.type,
-                )
-            )
-        return transactions
+        return self.transaction_repo.get_by_account(account_id)
+    
+    def json_transfer( self, transaction):
+        if not transaction: return transaction
+        return {
+            "amount": transaction.amount,
+            "currency": transaction.currency,
+            "label": transaction.label,
+            "recipient": transaction.destination
+        }
+        
+    def json_detail(self, transaction):
+        return {
+            "timestamp": transaction.datetime,
+            "label": transaction.label,
+            "amount": transaction.amount
+        }
+
+        

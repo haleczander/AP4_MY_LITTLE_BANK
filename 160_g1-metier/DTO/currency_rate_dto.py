@@ -1,6 +1,12 @@
 class CurrencyRate:
     def __init__(self):
         pass
+    
+    def get_id(self):
+        return self.id
+    
+    def set_id(self, id):
+        self.id = id
 
     def get_ref_currency(self):
         return self.ref_currency
