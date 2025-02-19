@@ -42,9 +42,13 @@ class AccountRepo(Repository):
 
         self.connection.execute(
             f"""
-            SELECT balance FROM account WHERE account_number = %s
+            SELECT balance 
+            FROM account 
+            WHERE account_number = %s
             """, (id,))
-        return self.connection.fetchone()
+        
+        res = self.connection.fetchall()
+        return None if not res else res[0][0]
 
     # update
     def update_account(self, id, balance, currency):
