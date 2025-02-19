@@ -27,7 +27,7 @@ class AccountService(Service):
         return account
 
     def get_balance(self, id):
-        return self.account_repo.get_balance()
+        return self.account_repo.get_balance(id)
 
     def get_details(self, id):
         return self.transaction_service.get_transactions_by_account(id)
