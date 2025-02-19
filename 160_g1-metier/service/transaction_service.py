@@ -11,10 +11,10 @@ class TransactionService(Service):
 
     # create
     def create_transaction(
-        self, source_acc, destination_acc, currency, amount, label, datetime, type
+        self, source_acc, destination_acc, currency, amount, datetime, label, type
     ):
-        self.transaction_repo.create_transaction(
-            source_acc, destination_acc, currency, amount, label, datetime, type
+        return self.transaction_repo.execute_transaction(
+            source_acc, destination_acc, currency, amount, datetime, label, type
         )
 
     # read
