@@ -9,7 +9,7 @@ ENDPOINT = "/account"
 
 @account_bp.post(ENDPOINT)
 def post_account_exists():
-    return post(f"{API}{ENDPOINT}", json=request.get_json()).account
+    return post(f"{API}{ENDPOINT}", json=request.get_json()).content
     
 
 ACCOUNT = "<account>"
